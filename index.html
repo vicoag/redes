@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>✨ Mi Link en Bio</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <canvas id="bg"></canvas>
+
+  <main class="wrap">
+    <section class="card">
+      <header class="profile">
+        <img class="avatar" src="https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/fd0931f536f5f16da22510c5404b176f~tplv-tiktokx-cropcenter:1080:1080.jpeg?dr=14579&refresh_token=6e4ce142&x-expires=1765947600&x-signature=RbgtTcWjTpRfVp5A6lgsnZkahag%3D&t=4d5b0474&ps=13740610&shp=a5d48078&shcp=81f88b70&idc=maliva" alt="Foto de perfil" />
+        <h1 class="name">Vico Aguilar ✨</h1>
+        <p class="bio">Lifestyle · Beauty · GRWM 💗</p>
+      </header>
+
+      <nav class="links" aria-label="Redes sociales">
+        <a class="btn ig" href="https://instagram.com/vicoaguilar_" target="_blank" rel="noopener">
+          Instagram <span class="tag">@vicoaguilar_</span>
+        </a>
+
+        <a class="btn tt" href="https://tiktok.com/@vicoaguilarr" target="_blank" rel="noopener">
+          TikTok <span class="tag">@vicoaguilarr</span>
+        </a>
+
+        <a class="btn yt" href="https://youtube.com/@tuusuario" target="_blank" rel="noopener">
+          YouTube <span class="tag">videos</span>
+        </a>
+
+        <a class="btn mail" href="mailto:hellovicoaguilar@gmail.com">
+          Correo <span class="tag">colabs</span>
+        </a>
+      </nav>
+
+      <footer class="footer">
+        <p>© <span id="year"></span> · made with 💗</p>
+      </footer>
+    </section>
+  </main>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+
+  <!-- Fondo aurora girly (SIN mouse) -->
+ <script>
+(() => {
+  const canvas = document.getElementById("bg");
+  const ctx = canvas.getContext("2d");
+
+  const DPR = Math.min(window.devicePixelRatio || 1, 2);
+  let W = 0, H = 0;
+
+  function resize() {
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.width = Math.floor(W * DPR);
+    canvas.height = Math.floor(H * DPR);
+    canvas.style.width = W + "px";
+    canvas.style.height = H + "px";
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+  window.addEventListener("resize", resize);
+  resize();
+
+  // Fondo blush
+  function paintBase() {
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, "#fff0f6");
+    g.addColorStop(1, "#ffe3ef");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  const heartImg = new Image();
+  heartImg.src = "heart.png";
+
+  const hearts = [];
+
+  // ====== AJUSTES IMPORTANTES ======
+  const spawnRate = 4.5;        // corazones por segundo (sube a 4.5 si quieres MÁS)
+  const maxHearts = 120;         // límite de corazones en pantalla (sube a 120 si tu PC aguanta)
+  const centerBias = 0.40;      // 0..1 (más alto = más centrado)
+  const xSpread = 0.95;         // ancho relativo de dispersión alrededor del centro (0.35 más cerrado, 0.75 más abierto)
+
+  function rand(min, max) { return Math.random() * (max - min) + min; }
+
+  // Distribución triangular (más probabilidad en el centro)
+  function triangular() {
+    return (Math.random() + Math.random()) / 2; // 0..1 pero más cerca del 0.5
+  }
+
+  function spawnHeart() {
+    if (hearts.length >= maxHearts) return;
+
+    const centerX = W * 0.5;
+
+    // Posición X centrada (con sesgo al centro)
+    // triangular() da valores más cercanos a 0.5
+    const t = triangular();
+    const spreadPx = W * xSpread * 0.5;
+
+    // mezcla entre "total random" y "centrado"
+    const centeredX = centerX + (t - 0.5) * 2 * spreadPx;
+    const randomX = Math.random() * W;
+    const x = centeredX * centerBias + randomX * (1 - centerBias);
+
+    const size = rand(18, 42);
+
+    hearts.push({
+      x,
+      y: H + size + 40,
+      size,
+      speed: rand(0.04, 0.10),            // MUY lento
+      drift: (Math.random() - 0.5) * 0.08, // lateral suave
+      rot: rand(-0.25, 0.25),
+      rotSpeed: rand(-0.0006, 0.0006),
+      opacity: rand(0.65, 0.95)
+    });
+  }
+
+  let last = performance.now();
+  let spawnCarry = 0;
+
+  function tick(t) {
+    const dt = Math.min(32, t - last);
+    last = t;
+
+    // Spawn continuo (sin intervalos, siempre estable)
+    spawnCarry += (dt / 1000) * spawnRate;
+    while (spawnCarry >= 1) {
+      spawnHeart();
+      spawnCarry -= 1;
+    }
+
+    paintBase();
+
+    // Dibujar/actualizar
+    for (let i = hearts.length - 1; i >= 0; i--) {
+      const h = hearts[i];
+
+      h.y -= h.speed * dt * 8;  // lento pero constante (tunea este número si lo quieres aún más lento: 6)
+      h.x += h.drift * dt * 0.35;
+      h.rot += h.rotSpeed * dt;
+
+      // Desvanecer suave al acercarse arriba
+      const fadeZone = H * 0.25;
+      const topDist = Math.max(0, (h.y - 0) / fadeZone);
+      const fade = Math.min(1, Math.max(0, topDist));
+      const alpha = h.opacity * fade;
+
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.translate(h.x, h.y);
+      ctx.rotate(h.rot);
+      ctx.drawImage(heartImg, -h.size/2, -h.size/2, h.size, h.size);
+      ctx.restore();
+
+      // Quitar cuando salga de arriba
+      if (h.y < -h.size - 80) {
+        hearts.splice(i, 1);
+      }
+    }
+
+    // Velito dreamy
+    ctx.fillStyle = "rgba(255, 235, 245, 0.16)";
+    ctx.fillRect(0, 0, W, H);
+
+    requestAnimationFrame(tick);
+  }
+
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
