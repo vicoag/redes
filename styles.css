@@ -1,16 +1,9 @@
 :root{
   --text:#2b2230;
   --muted:#6b5a6d;
-
-  /* Rosa blush muy claro */
   --card: rgba(255, 235, 245, 0.85);
-
-  /* Borde rosa suave */
   --border: rgba(255, 170, 210, 0.35);
-
-  /* Sombra rosita elegante */
   --shadow: 0 22px 60px rgba(255, 160, 200, 0.25);
-
   --radius: 26px;
 }
 *{box-sizing:border-box}
@@ -25,41 +18,29 @@ body{
   padding: 28px 14px;
 }
 
-/* Canvas atrás */
 #bg{
   position: fixed;
   inset: 0;
   z-index: -1;
 }
 
-/* Layout */
 .wrap{
   width: min(520px, 100%);
 }
 
 .card{
   position: relative;
-
-  /* Transparencia REAL (menos pintura) */
   background: rgba(255, 230, 245, 0.45);
-
-  /* Borde luminoso tipo iOS */
   border: 1px solid rgba(255, 255, 255, 0.55);
-
   border-radius: var(--radius);
-
-  /* Blur moderado (clave) */
   backdrop-filter: blur(14px) saturate(1.2);
   -webkit-backdrop-filter: blur(14px) saturate(1.2);
-
-  /* Sombra externa suave */
   box-shadow:
     0 24px 60px rgba(255, 150, 200, 0.22),
     inset 0 1px 0 rgba(255,255,255,0.65);
-
   padding: 28px;
 }
-/* Perfil */
+
 .profile{
   text-align:center;
   padding: 6px 8px 16px;
@@ -89,7 +70,6 @@ body{
   line-height: 1.35rem;
 }
 
-/* Botones */
 .links{
   display:flex;
   flex-direction:column;
@@ -130,14 +110,12 @@ body{
   white-space: nowrap;
 }
 
-/* Variantes (toque “brand”) */
 .btn.ig { border-color: rgba(255, 140, 190, .35); }
 .btn.tt { border-color: rgba(210, 160, 255, .35); }
 .btn.yt { border-color: rgba(255, 170, 200, .35); }
 .btn.wa { border-color: rgba(255, 200, 180, .35); }
 .btn.mail { border-color: rgba(255, 150, 205, .35); }
 
-/* Footer */
 .footer{
   margin-top: 18px;
   padding-top: 14px;
